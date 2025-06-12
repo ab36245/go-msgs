@@ -3,7 +3,7 @@ package msgs
 import (
 	"time"
 
-	"github.com/ab36245/go-codec"
+	"github.com/ab36245/go-defs"
 	"github.com/ab36245/go-msgpack"
 )
 
@@ -35,7 +35,7 @@ type objectDecoder struct {
 	mp *msgpack.Decoder
 }
 
-func (s *objectDecoder) GetArray(name string) (codec.ArrayDecoder, error) {
+func (s *objectDecoder) GetArray(name string) (defs.ArrayDecoder, error) {
 	return decodeArray(s.mp)
 }
 
@@ -47,7 +47,7 @@ func (s *objectDecoder) GetInt(name string) (int, error) {
 	return decodeInt(s.mp)
 }
 
-func (s *objectDecoder) GetObject(name string) (codec.ObjectDecoder, error) {
+func (s *objectDecoder) GetObject(name string) (defs.ObjectDecoder, error) {
 	return decodeObject(s.mp)
 }
 
@@ -67,7 +67,7 @@ type arrayDecoder struct {
 	length int
 }
 
-func (s *arrayDecoder) GetArray() (codec.ArrayDecoder, error) {
+func (s *arrayDecoder) GetArray() (defs.ArrayDecoder, error) {
 	return decodeArray(s.mp)
 }
 
@@ -79,7 +79,7 @@ func (s *arrayDecoder) GetInt() (int, error) {
 	return decodeInt(s.mp)
 }
 
-func (s *arrayDecoder) GetObject() (codec.ObjectDecoder, error) {
+func (s *arrayDecoder) GetObject() (defs.ObjectDecoder, error) {
 	return decodeObject(s.mp)
 }
 

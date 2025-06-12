@@ -3,7 +3,7 @@ package msgs
 import (
 	"time"
 
-	"github.com/ab36245/go-codec"
+	"github.com/ab36245/go-defs"
 	"github.com/ab36245/go-msgpack"
 )
 
@@ -36,7 +36,7 @@ type objectEncoder struct {
 	mp *msgpack.Encoder
 }
 
-func (e *objectEncoder) PutArray(name string, length int, handler func(codec.ArrayEncoder)) {
+func (e *objectEncoder) PutArray(name string, length int, handler func(defs.ArrayEncoder)) {
 	encodeArray(e.mp, length, handler)
 }
 
@@ -48,7 +48,7 @@ func (e *objectEncoder) PutInt(name string, value int) {
 	encodeInt(e.mp, value)
 }
 
-func (e *objectEncoder) PutObject(name string, handler func(codec.ObjectEncoder)) {
+func (e *objectEncoder) PutObject(name string, handler func(defs.ObjectEncoder)) {
 	encodeObject(e.mp, handler)
 }
 
@@ -67,7 +67,7 @@ type arrayEncoder struct {
 	mp *msgpack.Encoder
 }
 
-func (e *arrayEncoder) PutArray(length int, handler func(codec.ArrayEncoder)) {
+func (e *arrayEncoder) PutArray(length int, handler func(defs.ArrayEncoder)) {
 	encodeArray(e.mp, length, handler)
 }
 
@@ -79,7 +79,7 @@ func (e *arrayEncoder) PutInt(value int) {
 	encodeInt(e.mp, value)
 }
 
-func (e *arrayEncoder) PutObject(handler func(codec.ObjectEncoder)) {
+func (e *arrayEncoder) PutObject(handler func(defs.ObjectEncoder)) {
 	encodeObject(e.mp, handler)
 }
 
@@ -87,7 +87,7 @@ func (e *arrayEncoder) PutString(value string) {
 	encodeString(e.mp, value)
 }
 
-func encodeArray(mp *msgpack.Encoder, length int, handler func(codec.ArrayEncoder)) {
+func encodeArray(mp *msgpack.Encoder, length int, handler func(defs.ArrayEncoder)) {
 	handler(newArrayEncoder(mp, length))
 }
 
@@ -99,7 +99,7 @@ func encodeInt(mp *msgpack.Encoder, value int) {
 	mp.PutInt(int64(value))
 }
 
-func encodeObject(mp *msgpack.Encoder, handler func(codec.ObjectEncoder)) {
+func encodeObject(mp *msgpack.Encoder, handler func(defs.ObjectEncoder)) {
 	handler(newObjectEncoder(mp))
 }
 
