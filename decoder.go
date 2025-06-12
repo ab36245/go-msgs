@@ -3,7 +3,7 @@ package msgs
 import (
 	"time"
 
-	"github.com/ab36245/go-defs"
+	"github.com/ab36245/go-model"
 	"github.com/ab36245/go-msgpack"
 )
 
@@ -35,24 +35,28 @@ type objectDecoder struct {
 	mp *msgpack.Decoder
 }
 
-func (s *objectDecoder) GetArray(name string) (defs.ArrayDecoder, error) {
-	return decodeArray(s.mp)
+func (d *objectDecoder) GetArray(name string) (model.ArrayDecoder, error) {
+	return decodeArray(d.mp)
 }
 
-func (s *objectDecoder) GetDate(name string) (time.Time, error) {
-	return decodeDate(s.mp)
+func (d *objectDecoder) GetDate(name string) (time.Time, error) {
+	return decodeDate(d.mp)
 }
 
-func (s *objectDecoder) GetInt(name string) (int, error) {
-	return decodeInt(s.mp)
+func (d *objectDecoder) GetInt(name string) (int, error) {
+	return decodeInt(d.mp)
 }
 
-func (s *objectDecoder) GetObject(name string) (defs.ObjectDecoder, error) {
-	return decodeObject(s.mp)
+func (d *objectDecoder) GetObject(name string) (model.ObjectDecoder, error) {
+	return decodeObject(d.mp)
 }
 
-func (s *objectDecoder) GetString(name string) (string, error) {
-	return decodeString(s.mp)
+func (d *objectDecoder) GetRef(name string) (model.Ref, error) {
+	return decodeRef(d.mp)
+}
+
+func (d *objectDecoder) GetString(name string) (string, error) {
+	return decodeString(d.mp)
 }
 
 func newArrayDecoder(mp *msgpack.Decoder) *arrayDecoder {
@@ -67,28 +71,32 @@ type arrayDecoder struct {
 	length int
 }
 
-func (s *arrayDecoder) GetArray() (defs.ArrayDecoder, error) {
-	return decodeArray(s.mp)
+func (d *arrayDecoder) GetArray() (model.ArrayDecoder, error) {
+	return decodeArray(d.mp)
 }
 
-func (s *arrayDecoder) GetDate() (time.Time, error) {
-	return decodeDate(s.mp)
+func (d *arrayDecoder) GetDate() (time.Time, error) {
+	return decodeDate(d.mp)
 }
 
-func (s *arrayDecoder) GetInt() (int, error) {
-	return decodeInt(s.mp)
+func (d *arrayDecoder) GetInt() (int, error) {
+	return decodeInt(d.mp)
 }
 
-func (s *arrayDecoder) GetObject() (defs.ObjectDecoder, error) {
-	return decodeObject(s.mp)
+func (d *arrayDecoder) GetObject() (model.ObjectDecoder, error) {
+	return decodeObject(d.mp)
 }
 
-func (s *arrayDecoder) GetString() (string, error) {
-	return decodeString(s.mp)
+func (d *arrayDecoder) GetRef() (model.Ref, error) {
+	return decodeRef(d.mp)
 }
 
-func (s *arrayDecoder) Length() int {
-	return s.length
+func (d *arrayDecoder) GetString() (string, error) {
+	return decodeString(d.mp)
+}
+
+func (d *arrayDecoder) Length() int {
+	return d.length
 }
 
 func decodeDate(mp *msgpack.Decoder) (time.Time, error) {
@@ -105,6 +113,10 @@ func decodeInt(mp *msgpack.Decoder) (int, error) {
 
 func decodeObject(mp *msgpack.Decoder) (*objectDecoder, error) {
 	return newObjectDecoder(mp), nil
+}
+
+func decodeRef(mp *msgpack.Decoder) (model.Ref, error) {
+	return model.Ref(mp.GetString()), nil
 }
 
 func decodeString(mp *msgpack.Decoder) (string, error) {
