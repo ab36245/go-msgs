@@ -48,6 +48,10 @@ func (e *objectEncoder) PutInt(name string, value int) {
 	encodeInt(e.mp, value)
 }
 
+func (e *objectEncoder) PutMap(name string, length int, handler func(model.MapEncoder)) {
+	encodeMap(e.mp, length, handler)
+}
+
 func (e *objectEncoder) PutObject(name string, handler func(model.ObjectEncoder)) {
 	encodeObject(e.mp, handler)
 }
@@ -83,6 +87,10 @@ func (e *arrayEncoder) PutInt(value int) {
 	encodeInt(e.mp, value)
 }
 
+func (e *arrayEncoder) PutMap(length int, handler func(model.MapEncoder)) {
+	encodeMap(e.mp, length, handler)
+}
+
 func (e *arrayEncoder) PutObject(handler func(model.ObjectEncoder)) {
 	encodeObject(e.mp, handler)
 }
@@ -92,6 +100,49 @@ func (e *arrayEncoder) PutRef(value model.Ref) {
 }
 
 func (e *arrayEncoder) PutString(value string) {
+	encodeString(e.mp, value)
+}
+
+func newMapEncoder(mp *msgpack.Encoder, length int) *mapEncoder {
+	mp.PutMapLength(length)
+	return &mapEncoder{
+		mp: mp,
+	}
+}
+
+type mapEncoder struct {
+	mp *msgpack.Encoder
+}
+
+func (e *mapEncoder) PutArray(length int, handler func(model.ArrayEncoder)) {
+	encodeArray(e.mp, length, handler)
+}
+
+func (e *mapEncoder) PutDate(value time.Time) {
+	encodeDate(e.mp, value)
+}
+
+func (e *mapEncoder) PutInt(value int) {
+	encodeInt(e.mp, value)
+}
+
+func (e *mapEncoder) PutKey(value string) {
+	encodeString(e.mp, value)
+}
+
+func (e *mapEncoder) PutMap(length int, handler func(model.MapEncoder)) {
+	encodeMap(e.mp, length, handler)
+}
+
+func (e *mapEncoder) PutObject(handler func(model.ObjectEncoder)) {
+	encodeObject(e.mp, handler)
+}
+
+func (e *mapEncoder) PutRef(value model.Ref) {
+	encodeRef(e.mp, value)
+}
+
+func (e *mapEncoder) PutString(value string) {
 	encodeString(e.mp, value)
 }
 
@@ -105,6 +156,10 @@ func encodeDate(mp *msgpack.Encoder, value time.Time) {
 
 func encodeInt(mp *msgpack.Encoder, value int) {
 	mp.PutInt(int64(value))
+}
+
+func encodeMap(mp *msgpack.Encoder, length int, handler func(model.MapEncoder)) {
+	handler(newMapEncoder(mp, length))
 }
 
 func encodeObject(mp *msgpack.Encoder, handler func(model.ObjectEncoder)) {

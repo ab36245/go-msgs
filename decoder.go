@@ -47,6 +47,10 @@ func (d *objectDecoder) GetInt(name string) (int, error) {
 	return decodeInt(d.mp)
 }
 
+func (d *objectDecoder) GetMap(name string) (model.MapDecoder, error) {
+	return decodeMap(d.mp)
+}
+
 func (d *objectDecoder) GetObject(name string) (model.ObjectDecoder, error) {
 	return decodeObject(d.mp)
 }
@@ -83,6 +87,10 @@ func (d *arrayDecoder) GetInt() (int, error) {
 	return decodeInt(d.mp)
 }
 
+func (d *arrayDecoder) GetMap() (model.MapDecoder, error) {
+	return decodeMap(d.mp)
+}
+
 func (d *arrayDecoder) GetObject() (model.ObjectDecoder, error) {
 	return decodeObject(d.mp)
 }
@@ -99,16 +107,68 @@ func (d *arrayDecoder) Length() int {
 	return d.length
 }
 
-func decodeDate(mp *msgpack.Decoder) (time.Time, error) {
-	return mp.GetTime(), nil
+func newMapDecoder(mp *msgpack.Decoder) *mapDecoder {
+	return &mapDecoder{
+		mp:     mp,
+		length: mp.GetMapLength(),
+	}
+}
+
+type mapDecoder struct {
+	mp     *msgpack.Decoder
+	length int
+}
+
+func (d *mapDecoder) GetArray() (model.ArrayDecoder, error) {
+	return decodeArray(d.mp)
+}
+
+func (d *mapDecoder) GetDate() (time.Time, error) {
+	return decodeDate(d.mp)
+}
+
+func (d *mapDecoder) GetInt() (int, error) {
+	return decodeInt(d.mp)
+}
+
+func (d *mapDecoder) GetKey() (string, error) {
+	return decodeString(d.mp)
+}
+
+func (d *mapDecoder) GetMap() (model.MapDecoder, error) {
+	return decodeMap(d.mp)
+}
+
+func (d *mapDecoder) GetObject() (model.ObjectDecoder, error) {
+	return decodeObject(d.mp)
+}
+
+func (d *mapDecoder) GetRef() (model.Ref, error) {
+	return decodeRef(d.mp)
+}
+
+func (d *mapDecoder) GetString() (string, error) {
+	return decodeString(d.mp)
+}
+
+func (d *mapDecoder) Length() int {
+	return d.length
 }
 
 func decodeArray(mp *msgpack.Decoder) (*arrayDecoder, error) {
 	return newArrayDecoder(mp), nil
 }
 
+func decodeDate(mp *msgpack.Decoder) (time.Time, error) {
+	return mp.GetTime(), nil
+}
+
 func decodeInt(mp *msgpack.Decoder) (int, error) {
 	return int(mp.GetInt()), nil
+}
+
+func decodeMap(mp *msgpack.Decoder) (*mapDecoder, error) {
+	return newMapDecoder(mp), nil
 }
 
 func decodeObject(mp *msgpack.Decoder) (*objectDecoder, error) {
