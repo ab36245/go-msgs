@@ -11,15 +11,15 @@ func Decoder(b []byte) *decoder {
 	id := int(mp.GetInt())
 	return &decoder{
 		ObjectDecoder: decoders.NewObjectDecoder(mp),
-		mp:            mp,
 		id:            id,
+		mp:            mp,
 	}
 }
 
 type decoder struct {
 	*decoders.ObjectDecoder
-	mp *msgpack.Decoder
 	id int
+	mp *msgpack.Decoder
 }
 
 func (d *decoder) Id() int {
